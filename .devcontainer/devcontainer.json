@@ -1,0 +1,40 @@
+{
+	"name": "Claude Dev Container Demo",
+	"image": "mcr.microsoft.com/devcontainers/base:ubuntu",
+	"features": {
+		"ghcr.io/devcontainers/features/node:2": {},
+		"ghcr.io/anthropics/devcontainer-features/claude-code:1.0": {},
+		// Docker in Docker ist eine Abwägung um Quarkus Dev Mode mit z.B. separaten Datenbankcontainern auszuführen.
+		// Dies könnte es einem kompromittierten Prozess erleichtern, aus dem Container zu entkommen.
+		"ghcr.io/devcontainers/features/docker-in-docker:4": {
+			"moby": "false"
+		},
+		"ghcr.io/devcontainers/features/java:1": {
+			"version": "25",
+			"jdkDistro": "tem",
+			"installMaven": "true",
+			"installGradle": "false",
+			"mavenVersion": "latest"
+		}
+	},
+
+	"forwardPorts": [8080],
+
+	"mounts": [
+		// Achtung, wenn ~/.m2/settings.xml Credentials enthält
+		{
+			"source": "${localEnv:HOME}${localEnv:USERPROFILE}/.m2",
+			"target": "/home/vscode/.m2",
+			"type": "bind"
+		},
+		// Claude config
+		{
+			"source": "claude_devcontainer-${devcontainerId}",
+			"target": "/home/vscode/.claude",
+			"type": "volume"
+		}
+	],
+	"containerEnv": {
+		"CLAUDE_CONFIG_DIR": "/home/vscode/.claude"
+	}
+}
